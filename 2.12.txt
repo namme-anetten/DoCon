@@ -1,0 +1,53 @@
+        DoCon-2.12  current notices.
+
+        In particular, known bugs and their workarounds.
+
+
+(the contents of this file may update)
+
+
+
+
+------------------------------------------------------------------------
+{sysFeatures} 
+Generally, the system features in GHC change rapidly last years, and the
+DoCon documentation is slow to follow these features.
+
+------------------------------------------------------------------------
+{pl}  Parsing a list.
+
+Very often such an expression like  smParse _  " [] " 
+                                    smParse _  " [(1,2),(3,0)] "
+                                    smParse _  " (1,2):(3,0) "
+
+produces the error report instead of the list of something.
+
+The DoCon parsing interprets  "[", ",", ":"  as the infix (prefix) 
+operators to form a list (see  ...parse/OpTab_.hs). 
+"," is also used for the pair.  Sometimes this goes incorrect.
+
+Workaround
+----------
+transpose the parsing and the list operation.
+
+For example,            mM :: [[Pol Z]]  
+is a list of lists of polynomials.
+Parsing mM may look like this:
+                           mM = mapmap (smParse s) [["2*x+1", "x" ],
+                                                    [ "x^2" , "0" ]]
+- were  s  is the sample polynomial.
+------------------------------------------------------------------------
+{mtr}  Instances for domain  Matrix a
+       for the case (CommutativeRing a =>)
+
+They include  Num,  but also should include  MulSemigroup,... Ring.
+This is to be improved in further versions.
+Because according to the SA approach accepted in DoCon, the domain
+is also defined in this case by a matrix sample. If the sample is a 
+square matrix, then the above instances should be valid.
+
+------------------------------------------------------------------------
+{record}  Data with labeled fields can be updated in a nicer way 
+
+than it is done in some source programs in docon-2.12:
+there can be used the syntax  dd {field = ...}.

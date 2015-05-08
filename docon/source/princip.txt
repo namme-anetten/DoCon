@@ -1,0 +1,166 @@
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+--  The Algebraic Domain Constructor  DoCon,   version 2.
+--
+--  Copyright  Serge Mechveliani,  1995-1999
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+
+
+
+
+
+
+
+
+----------------------------------------------------------------
+-- The technology of the below infix operation parsing was taken
+-- from the  FLAC system where it was developed by  A.P.Nemytykh 
+-- and S.V.Chmutov.
+----------------------------------------------------------------
+
+
+See first the commentaries in the module  IParse.hs.
+
+
+
+infixParse  calls the  Automaton  `scan'.  
+`scan' manages the *expression* lists  
+
+                    res,  stack,  xs
+
+and the current *state*  s = WasArg | NoArg.
+
+From the start,  xs = input list.  It is read from the head.  
+In the end  res  contains the result.  
+
+Commonly,  xs  moves "from right to left", the head of  xs  
+appending to the end of  res.  Elements never return to  xs.  
+An operation sign from (head xs) may sometimes not to jump to
+res  directly, but "fall" down to  stack  (with res in its "bag"),
+and then  pop  to  res  with some parentheses rearranged.
+
+The state
+        s = WasArg   means some arguments were taken from  xs, and
+                     there may follow the operation sign.  
+        NoArg        means  not(WasArg).
+
+stack     may contain several expressions.  Any expression kept in
+          the stack may be only an operation supplied with the 
+          argument list.
+
+
+------------------------------------------------------------------
+Abbreviations.
+
+* What we script here as, say,  [2,+,x1],  
+  in the real program is        [ (L "2"),(L "+"),(L "x1") ]
+
+* When the result parentheses are set, we obtain an expression, 
+  like, say,
+                 ( E "!"  [(L "3")] [] )
+  Here we script this as 
+                 (!, [3], [])
+  which means the  operation sign, left-hand argument list, 
+  right-hand argument list.
+------------------------------------------------------------------
+
+
+Example.         " 3 ! * - 2 "    is processed as follows.  
+
+
+                                              <--   <---
+                                                 /
+   s            res                   stack    /        xs
+ -----------------------------------------------------------------
+       |                   |                         |
+ NoArg |        []         |          []             | [3 ! * - 2]
+       |                   |                         |
+
+Head expression in  res1  is "3".  It is not contained in the
+operation table, that is it is not an operation sign.   Prepend it
+to  res:
+
+ NoArg                [3]             []               [! * - 2]
+
+Now `scan' finds the lexeme "!" in the operation table and 
+extracts its description.
+scan  may interpret an operation sign in three ways. The class of
+operation - (0,l) or (l,0) or (l,r) -  is defined according to the
+operation description   opD = (op, (d1,d2,d3))  and  the  *current 
+state*  s.
+Initially, s = NoArg.
+
+"!" is an operation of class (0,r), stack is empty, hence push "!"
+to stack with the whole  res  as an argument list.
+Also put the arities (l,r)  and the right-hand precedence of the
+operation.  Here  res  contains all the possible left-hand 
+arguments for operation - and maybe, some extra ones.  
+The new status is WasArg:
+
+ WasArg               []     [ ((!,1,0,255), [3]) ]    [* - 2]
+
+Next expression in  res1  "*"  is an (1,1) operation, it struggles
+with "!" for arguments.   The left-hand precedence of "*" is  195,
+the right-hand precedence of "!" is 205.  "!" wins,  hence it pops 
+out from the stack to  res,  and the parentheses  are  set  in  it
+according to the arities of "!":
+
+           [ (!,[3],[]) ]    []                        [* - 2]
+
+"*" has to struggle with the stack top, but the latter is empty. 
+Hence "*" pushes to the stack taking  res  in the "bag".
+The new state is NoArg:
+
+ NoArg       []     [ ( (*,1,1,195), [(!,[3],[])] ) ]   [- 2]
+
+
+Here "-" is of (0,r) class (prefix operation) and its left-hand
+precedence is 210 - this is defined by  s  and  operation group 
+description for "-".  The right-hand precedence of "*" is 195.
+"-" wins and pushes to stack  (with the empty argument list !?).
+
+                      [ ( (-,0,1,190), []           ) 
+                        ( (*,1,1,195), [(!,[3],[])] )  
+         []          ]                                     [2]
+
+Since "2" is not an operation, it moves to  res.
+`scan' keeps moving so through  xs  until is meets an operation.
+
+                      [ ( (-,0,1,190), []           ) 
+                        ( (*,1,1,195), [(!,[3],[])] ) 
+         [2]          ]                                    []
+
+xs  got empty.
+
+So `scan' starts to free the whole stack.
+The top of it is the prefix "-" operation having its argument in
+res.
+"-" pops from stack to the  res  list taking its argument from  
+res:
+
+      [ (-,[],[2]) ]    [ ( (*,1,1,195), [(!,[3],[])] ) ]    []
+                                                   
+
+Next operation in the stack is  "*",  it has its left-hand 
+argument in its "bag":  [(!,[3],[])].   The right-hand one,  
+[ (-,[],[2]) ],  resides in  res:
+
+      [ (*, [(!,[3],[])], [(-,[],[2])] ) ]      []           []
+
+And here `scan' stops.
+
+------------------------------------------------------------------
+
+Remark.
+The real program also processes the parenthesis lexemes set 
+initially in the input list.
+
+
+
+
+
+
+
+
+

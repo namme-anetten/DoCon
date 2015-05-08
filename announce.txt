@@ -1,0 +1,186 @@
+                   A N N O U N C E M E N T
+
+            The Algebraic Domain Constructor  DoCon
+
+                       Version 2.12
+
+
+is available, together with its source program, on Internet at the
+following addresses:
+
+  http://www.botik.ru/pub/local/Mechveliani/docon/      (Russian site),
+  ftp.botik.ru/pub/local/Mechveliani/docon/             (same site),
+  http://www.haskell.org/docon/distrib/                 (USA site)
+
+
+The difference to the previous releases of 2.09, 2.10, 2.11
+-----------------------------------------------------------
+1. Printing to a string improved by introducing the class  DShow.
+2. The functions  discriminant_1 and discriminant_1_euc  are introduced
+   for univariate polynomials. 
+3. solveCubic and solveQuartic  methods are added
+                                (see comments in the source).
+3. A couple of minor bug fixes done in installation and in porting to 
+   GHC-7.8.2.
+
+DoCon is
+--------
+a  Computer Algebra  program written in a  
+purely functional, non-strict language     Haskell.
+
+It joins the   categorial approach   to the mathematical computation 
+expressed via the Haskell type classes,  and explicit processing  of 
+the domain description terms.
+
+Categorial approach  means that
+-------------------------------
+arithmetic and some other operations are defined under the very
+generic assumptions: "over any Euclidean ring", over any field,
+and so on,
+the Domain Constructors are supported: 
+                     Fraction, Polynomial, Residue ring, and others,
+that is certain set of operations are defined automatically, 
+following the domain constructors. 
+
+Abilities 
+---------
+(mostly, commutative algebra)
+Mathematical library: 
+* Operations with permutations
+* Linear algebra over an Euclidean domain:  reduction to the 
+  staircase and diagonal forms of matrix, solving a system,
+* Operations with fractions over a ring with GCD,
+* Polynomial arithmetic in  R[x1...xn],  R a commutative ring, 
+  various kinds of polynomial representation
+  (univariate, multivariate, "recursive" form ...)
+* g.c.d  in  R[x1...xn],  R  a factorial ring
+* Factorization of bivariate polynomial over any finite field  k, 
+  building finite extension of  k  for the given dimension,
+  Hensel lift in R[x], for an Euclidean ring R.
+* Groebner basis  and  syzygy generators  in a free module over
+  R[x1...xn],  R  an Euclidean ring;
+* Some support for non-commutative polynomials over a commutative
+  ring;
+* Symmetric function package;
+
+Category hierarchy expressed partially via the data classes:
+* Set, Semigroup, Group, Ring, LinSolvRing ... LeftModule ...
+* operations with the description terms of  Subset, Subgroup, 
+  Subring, Ideal ...
+
+Domain constructors:
+* Permutation
+* Fraction field for a gcd-ring
+* Direct product of Sets, (semi)Groups, Rings,
+  Free (vector) module over a ring
+* Matrix algebra over a commutative ring
+* Polynomial algebra over a commutative ring: UPol, Pol, RPol models
+* Vector module over a ring P, maybe, with Groebner bases structure
+* Residue ring by the ideal:  ResidueI, ResidueE  models for the
+  generic and Euclidean case.
+
+Property processing:
+* evaluation of certain small set of the most important algebraic 
+  property values is supported, such as 
+  Finite, IsCyclicGroup, IsMaximalIdeal, and others.
+
+On Haskell language
+-------------------
+For the  Haskell language  materials, and its implementation systems 
+see the place 
+                 http://www.haskell.org
+
+Used language extension
+-----------------------
+DoCon is a program package written in what we call 
+Haskell-2-pre  - certain functional extension of  Haskell-2010.
+Haskell-2-pre   includes the   multiparametric classes,  overlapping
+instances, other minor features (see the part `extensions' in the 
+docon.cabal  file in the source).
+
+Used extra libraries (beyond Haskell-2010)
+--------------------
+Set.Set, Map.Map                -- of GHC,
+System.Random version 1.0.1.1  
+       -- a separate from GHC library (written in Haskell) residing on
+          http://hackage.haskell.org/package/random 
+          (first, install GHC, then use ghc to install the `random' 
+           package).
+       Re-build Random under each new GHC version.
+   
+Ports:    
+------    
+DoCon-2.12 has been tested under  ghc-7.8.2 + Linux,
+
+Reports about possible later ports is in the current notes in the 
+distribution:  
+              docon/notes/2.12.txt
+
+WARNING:  usually, each DoCon version works (literally as it is)
+          only under a single GHC version.
+
+On the other hand, it is easy to port to other GHC versions.
+We believe, it can be ported to other Haskell implementations. 
+The difficulty may be, for example, in different treating of 
+overlapping instances in Haskell implementations.
+
+Machines, environment
+---------------------
+DoCon  has to work everywhere where the aforementioned Haskell 
+language implementations work -- many machines and systems. 
+To install DoCon  on your particular machine, find the GHC 
+system at  http://haskell.org/ghc  and install it as it is explained 
+there. Then, follow the document  install.txt  of DoCon distribution.
+
+Analogues
+---------
+(Aldor-)Axiom, MuPAD.
+Difference:  
+DoCon is purely functional (avoids side effects),  
+relies on `lazy' evaluation, is written in Haskell only, 
+distributes freely with source.
+It uses the so-called sample argument approach to replace the 
+dependent types tool of Aldor language.
+DoCon  has a smaller library of methods 
+(no limits, no differential algebra, no integration ...).
+
+Documentation
+-------------
+Everything is explained in the file  docon/manual.ps  contained in 
+the archive. But first, look into the paper and manuscripts
+            "Computer algebra with Haskell ...",
+            "Haskell and computer algebra",
+            "What should be an universal functional lalnguage",
+residing at
+            http://www.botik.ru/~mechvel/papers.html
+
+to get author's idea about relation of Haskell to computer algebra. 
+
+* Particular points: the Manual 
+  * explains the relation of DoCon to Aldor language and 
+    Axiom system, 
+  * gives the performance tests for comparison to popular Axiom and
+    MuPAD computer algebra programs 
+    (`strict' and non-functional systems). 
+
+Demonstration, test, benchmark
+------------------------------
+install.txt  explains how to run the large automatic test.
+Selecting different parts in the test function result data  presents
+also the demonstration examples or benchmarks.
+
+Current notes
+-------------
+such as known bugs and their work-arounds, are contained in the 
+current notes in the distribuition:
+                                      docon/notes/2.12.txt
+-- the contents of this file updates. 
+
+
+The remarks are welcome:   mechvel@botik.ru
+------------------------
+
+Dr. Sergei D. Meshveliani,
+Program Systems Institute, 152020, Pereslavl-Zalessky, Russia.
+e-mail  mechvel@botik.ru
+http://www.botik.ru/~mechvel

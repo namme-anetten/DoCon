@@ -1,0 +1,52 @@
+--------------------------------------------------------------------
+This is the license ruling the terms and conditions  for  the  usage 
+and distributing of the computer program
+
+       Algebraic Domain Constructor (DoCon),  Version 2.12
+
+       Copyright (2014)  Serge Mechveliani.
+       All rights reserved.
+--------------------------------------------------------------------
+
+
+Below we call  
+  DoCon-derivative  any program close to DoCon-2.12 and derived from
+                    DoCon-2.12
+  User Program      any program incorporating or using 
+                    DoCon-derivative.
+
+This license states that
+
+* no guarantees are provided on the good or bad consequences of using
+  DoCon-2.12,
+* permission is granted to everyone to redistribute and exploit  
+  DoCon-2.12 or its parts, in source or binary form, modified or 
+  not, and to use in publications the theoretical and technical 
+  solutions described in DoCon-2.12 documentations and remarks,
+  provided the following conditions are satisfied.
+--------------------------------------------------------------------
+(a) Redistribution of source code must retain as a whole this 
+    license text.
+(b) Redistribution in binary form must reproduce  as  a  whole  this 
+    license in the documentation or in  materials  accompanying  the 
+    distribution.
+(c) Both the User Program and DoCon-derivative  should  be  given  a 
+    name  different  from  DoCon,  if  it  does  not  coincide  with 
+    DoCon-2.12.
+(d) The  User Program  should contain at  the  upper  level  of  its 
+    documentation materials
+     a reference to DoCon-2.12, and
+     a brief explanation of how the User Program relates to 
+     DoCon-2.12 and how the DoCon-derivative  is obtained from 
+     DoCon-2.12, so as to make clear the origin of the User Program.
+(e) Mentioning or exploiting in a  publication  of any theoretical,
+    or technical solution taken from  DoCon-2.12  manual or from its
+    other remarks must be supplied with a reference to DoCon-2.12.
+--------------------------------------------------------------------
+
+
+-------------------------
+Dr. Serge D. Mechveliani,
+Program Systems Institute, 152020, Pereslavl-Zalessky, Russia.
+e-mail  mechvel@botik.ru
+http://www.botik.ru/~mechvel

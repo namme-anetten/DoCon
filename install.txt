@@ -1,0 +1,423 @@
+               Installing the DoCon-2.12 system
+               --------------------------------
+
+
+
+------------------------------------------------------------------------
+The remarks are welcome:   Serge Mechveliani  <mechvel@botik.ru>
+------------------------------------------------------------------------
+
+See first  announce.txt, license.txt.
+
+DoCon-2.12  distributes as the archive of Haskell source programs 
+and documentation. 
+It was tested under the Glasgow Haskell implementations  
+                                        ghc-7.8.2,  under Linux.
+
+
+The reports about further possible ports are in the current notes of 
+distribution:
+              docon/notes/2.12.txt
+
+WARNING:  usually, each DoCon version works (literally as it is)
+          only under a single GHC version.
+On the other hand, it is usually easy to port to other GHC versions.
+We believe it also can be ported (with some effort) to Hugs or other 
+Haskell systems.
+
+
+
+
+** Installation in short ***********************************************
+
+* The package  System.Random version 1.0.1.1
+  is needed -- a non-standard and separate from GHC library (written in 
+  Haskell) residing on  http://hackage.haskell.org/package/random
+  (first, install GHC, then use ghc to install the `random' package).
+
+* Unzip  docon-2.12.zip 
+* Set the system variable  $doconSource  to point to the source root 
+  -- where  docon.cabal  resides.
+  Also set the same value for  doconSource  in the first line of the 
+  file  Makefile  in the same directory. 
+
+* Set in the file  source/docon.cabal  an appropriate (for your machine) 
+  memory restriction for the build in the line
+  +RTS -M...m -RTS
+
+  -- or just remove this line at all.
+
+* Command
+  cd $doconSource
+  make configure 
+  make build
+  make install
+
+(you can see in  Makefile  that these commands apply the command 
+`runhaskell Setup.hs'
+)
+  
+* Set to  $doconCpOpt  the options for the compilation under DoCon
+  (copy them from  docon.cabal)
+* To make and run the test, command 
+  cd demotest
+  ghc $doconCpOpt -O -rtsopts --make Main 
+  ./Main
+
+
+************************************************************************
+** Installation in detail **********************************************
+
+1. Download files
+
+The DoCon distribution directory contains
+            announce.txt
+            license.txt
+            install.txt      -- the file you are reading now
+            docon-2.12.zip   -- the DoCon source program and 
+                             -- documentation
+Download these files.
+
+------------------------------------------------------------------------
+2. Unfold
+
+Change to the directory where you wish too keep all the  DoCon 
+files (archive, source, documentation) -- let us call it       $(D).
+For example, on my machine, $(D) is /home/mechvel/docon/2.12
+Move  docon-2.12.zip  to  $(D)/  and command 
+                                             cd s(D)  
+                                             unzip docon-2.12.zip
+
+After this, you will have the following directories and files:
+        
+$(D)/docon-2.12.zip
+     announce.txt
+     license.txt
+     install.txt    
+     docon/manual.lat             -- Manual source in LaTex.
+       .../manual.ps              -- Manual in postscript format.
+       .../source/docon.cabal     -- Directory tree with the two
+              .../Setup.hs        -- files for building DoCon and
+              .../*.hs            -- with source modules
+                  ... 
+
+------------------------------------------------------------------------
+3. Set the system variable  $doconSource
+
+for the package source root   ( $(doconSource) = $(D)/docon/source )
+(where  docon.cabal  resides).
+
+For example, in my system, I use for this the Linux shell command
+
+  setenv doconSource  "/home/mechvel/docon/2.12/docon/source"
+
+Also set the same value for  doconSource  in the first line of the 
+file  Makefile  in the same directory. 
+
+The further steps of  `configure', `build', and `install'  
+are performed via the Cabal subsystem of GHC for creating Haskell
+software distributions.
+
+
+3.1. Set in the file  source/docon.cabal  
+     an appropriate (for your machine) memory restriction for the 
+     build in the line
+     +RTS -M...m -RTS
+
+     -- or just remove this line at all.
+
+------------------------------------------------------------------------
+4. Configure the  docon  package
+
+ cd $doconSource
+ make configure
+
+Here  $(c)  is the path to the needed GHC compiler.
+For example, for my current system, I set  /usr/bin/ghc
+$(inst)  is the path to the directory where you need to install the
+docon  package -- interface modules and object library.
+For example, I usually configure docon by the command
+
+    runghc Setup configure --ghc --prefix=$doconSource/inst -v 
+
+, which aims at installing it to  $(doconSource)/inst,
+and which applies the  ghc  system executable residing on the  path. 
+Check the messages produced by this command. They show, in 
+particular, which GHC tools are used and will be used. For example,
+ "
+  found ghc at /home/mechvel/ghc/6.10/inst/bin/ghc
+  found package tool in   /home/mechvel/ghc/6.10/inst/bin/ghc-pkg
+  Using install prefix:   /home/mechvel/docon/2.12/docon/source/inst
+ " 
+
+------------------------------------------------------------------------
+5. Build the  docon  package by
+                                 make build
+
+This command builds the package according to the specification
+contained in                                    $doconSource/docon.cabal
+(see this file).
+It compiles all the DoCon modules, putting the resulting .hi .o
+files and the two object libraries to the directory tree
+                                                    $doconSource/dist/
+This is the main installation phase.
+
+------------------------------------------------------------------------
+6. Install the  docon  package by
+                                   make install
+
+This puts the DoCon interface and libraries to the directory $(inst)
+and creates a user package  
+                          docon-2.12
+
+referring to these interface and libraries.
+
+Comand                       ghc-pkg -l
+to see the new package list.
+The file                     $HOME/.ghc/i386-linux-..../package.conf
+
+shows the new state of the user package set.
+See it to find out how the system has read and `understood' the
+package.
+
+From this point on, the  ghc  commands will automatically find the 
+DoCon interface, 
+because  ghc  would inspect the configuration contained in
+                                $HOME/.ghc/i386-linux-..../package.conf
+
+All the DoCon facilities and many of GHC items are visible now from 
+the module  DExport.
+
+------------------------------------------------------------------------
+7. Make and run test-demonstration
+
+We recommend first to set the system variables for the compilation
+option and for the package use option. For example,
+
+  setenv myCompilation  " ... "
+
+  setenv doconCpOpt
+       "-XUndecidableInstances -XFlexibleContexts -XOverlappingInstances 
+        -fno-warn-overlapping-patterns -fwarn-unused-binds 
+        -fwarn-unused-matches -XRecordWildCards -XNamedFieldPuns 
+        -fwarn-unused-imports"
+
+(do not break line in the latter string).
+It keeps the compilation options which are likely to be used with DoCon,
+and these particular ones are needed to compile the DoCon test.
+
+Then, the commands   cd $(s)/demotest
+                     ghc $doconCpOpt -rtsopts --make Main
+
+create the executable file     ./Main
+, which is run by the command  ./Main 
+
+
+Running the demo-test functions in interpreter:
+-----------------------------------------------
+ 
+  cd $(s)/demotest
+  rm *.hi *.o Main
+  ghc $doconCpOpt -O --make T_
+  ghci T_ 
+  -- interpreter and T_ load 
+  -- ...
+  T_> :set +s
+  T_> test "log"
+
+The test performs, copying the protocol to the file  ./log.
+The user may also run separately any part of DoCon test-demo 
+program. For example, 
+             ghci T_permut 
+             ...
+             T_permut_> :m DExport
+             DExport> fst $ T_permut.t_permut_ 7
+             [True,True]
+             (0.68 secs, 158260024 bytes)
+             DExport>
+
+
+    
+
+------------------------------------------------------------------------
+8. Further work 
+
+Choose some directory aside from DoCon, create your project there
+and compile (or/and interpret under ghci) your programs calling
+ghc, ghci  with the  $doconCpOpt  options.
+
+And a solid approach is to create your package that refers to the
+DoCon package.
+For example, copy to  $userDir  the file  $doconSource/Setup.hs,
+create the file
+                  $userDir/user.cabal
+with the contents
+
+  name:            user
+  version:         0.0
+  exposed-modules: ...
+  other-modules:   ...
+  build-depends:   docon
+  ghc-options:     ... -- see docon.cabal
+,
+and then run the Cabal commands `configure', `build', `install',
+as shown above, to install the user package referring to DoCon.
+When running `configure' add the option `--user' to enable it to
+search for the user package `docon' among the `user' packages.
+
+Before proceeding further, read the current remarks in the file
+
+                  .../docon/notes/2.12.txt
+
+residing on the site near the DoCon distribution directory.
+Also consult it concerning any unlucky cases.
+Also there exists the manual
+                             $(D)/docon/manual.ps
+
+-------------------------------------------------------------
+Remarks are welcome:    Serge Mechveliani  <mechvel@botik.ru>
+-------------------------------------------------------------
+
+
+
+
+
+************************************************************************
+** Some statistics for memory and timing *******************************
+
+-- For  ghc-6.6.1,  Debian Linux, --------------------------------------
+-- 1 Gb RAM machine of the GenuineIntel processor, 2135 GHz,
+-- cpu family 6, model 15, stepping 6, cache 2048 KB.
+
+`Making' ghc-6.6.1 by itself in 1 Gb RAM takes                1836 sec. 
+`Making' docon-2.11 by a single command,  
+                         under the  -O key, -M400m, takes      369 sec.
+
+The size of the .a library made by `make install' is          9631 Kb.
+The size of the executable  demotest/Main  file   is          8167 Kb.   
+The test running of  ./Main +RTS -M60m -RTS       takes        4.9 sec. 
+The minimal -M memory setting for running  demotest/Main  is  2500 Kb.   
+
+-- ghc-6.8.2 -----------------------------------------------------------
+
+`Making' docon-2.11 by a single command,  under the  
+                                        -O key, -M400m, takes   118 sec.
+The size of the library  libHSdocon-2.11.a 
+                made by `make install' is                     14204 Kb.
+The size of the executable  demotest/Main  file   is          11824 Kb.   
+The test running of  ./Main +RTS -M60m -RTS       takes         3.9 sec. 
+The minimal -M memory setting for running  demotest/Main  is   2500 Kb.   
+
+The same for  docon  made under    -O2 -fvia-C -optc-O2
+              and test made under  -O:
+`Making' docon under -M700m takes                               550 sec.
+The size of  libHSdocon-2.11.a  is                            16030 Kb.
+The size of demotest/Main is                                  22952 Kb.   
+The test running  takes                                         3.9 sec. 
+The minimal -M memory setting for running the test is         2400 Kb.
+
+-- ghc-6.8.3 -----------------------------------------------------------
+`Making' ghc-6.6.3 by itself in 1 Gb RAM takes                  923 sec.
+ `Making' docon-2.12 by a single command,  under the  
+                                        -O key, -M400m, takes    sec.
+The size of  libHSdocon-2.12.a  is                            16.xxx Kb.
+The size of demotest/Main is                                   13918 Kb.   
+The test running  takes                                         3.9 sec. 
+The minimal -M memory setting for running the test is         2500 Kb.
+
+-- ghc-6.10.1cand-october07 --------------------------------------------
+`Making' GHC by itself in 1 Gb RAM takes                       1400 sec.  
+`Making' docon-2.12 by a single command,  under the  
+                                        -O key, -M400m, takes    56 sec.
+The size of  libHSdocon-2.12.a  is                              7839 Kb.
+The size of demotest/Main is  (-O)                              7621 Kb.
+The test running  takes                                         3.5 sec. 
+The minimal -M memory setting for running the test is           2300 Kb.
+
+-- ghc-6.10.2 ----------------------------------------------------------
+`Making' GHC by itself in 1 Gb RAM takes                       ? sec.  
+`Making' docon-2.12 by a single command,  under the  
+                                        -O key, -M400m, takes    55 sec.
+The size of  libHSdocon-2.12.a  is                             7836 Kb.
+The size of demotest/Main for -O0 is                           7229 Kb.
+                              -O                                Kb.
+The test running for Main made under -O0 takes                  3.7 sec. 
+                                     -O                         3.5 sec.
+The minimal -M memory setting for running the test is           2300 Kb.
+
+-- ghc-6.10.3 ----------------------------------------------------------
+`Making' GHC by itself in 1 Gb RAM takes                       1450 sec.  
+`Making' docon-2.12 by a single command,  under the  
+                                        -O key, -M400m, takes    55 sec.
+The size of  libHSdocon-2.12.a  is                             7851 Kb.
+The size of demotest/Main for -O0 is                                Kb.
+                              -O                               7700 Kb.
+The test running for Main made under -O0 takes                      sec. 
+                                     -O                         3.5 sec.
+The minimal -M memory setting for running the test is           2300 Kb.
+
+-- ghc-6.10.4 ----------------------------------------------------------
+`Making' GHC by itself in 1 Gb RAM takes                        sec.  
+`Making' docon-2.12 by a single command,  under the  
+                                        -O key, -M400m, takes    55 sec.
+The size of  libHSdocon-2.12.a  is                             7848 Kb.
+The size of demotest/Main for -O0 is                                Kb.
+                              -O                               7696 Kb.
+The test running for Main made under -O0 takes                      sec. 
+                                     -O                         3.5 sec.
+The minimal -M memory setting for running the test is           2300 Kb.
+
+-- ghc-6.12.1:  approximately the same 
+
+
+
+-- ghc-6.12.3 ----------------------------------------------------------
+`Making' GHC by itself in 1 Gb RAM takes                       
+`Making' docon-2.12 by a single command,  under the  
+                                        -O key, -M400m, takes    53 sec.
+The size of  libHSdocon-2.12.a  is                             7868 Kb
+The size of demotest/Main for -O0 is                                
+                              -O                               8059 Kb
+The test running for Main made under -O0 takes                      
+                                     -O                         3.3 sec.
+The minimal -M memory setting for running the test is          2300 Kb.
+
+
+-- ghc-7.01 ------------------------------------------------------------
+`Making' GHC by itself in 1 Gb RAM takes                       
+`Making' docon-2.12 by a single command,  under the  
+                                        -O key, -M400m, takes    51 sec.
+The size of  libHSdocon-2.12.a  is                             7604 Kb
+The size of demotest/Main for -O0 is                                
+                              -O                               6890 Kb
+The test running for Main made under -O0 takes                      
+                                     -O                         3.6 sec.
+The minimal -M memory setting for running the test is          2200 Kb.
+
+-- ghc-7.4.1 -----------------------------------------------------------
+`Making' GHC by itself in 1 Gb RAM takes                         64 min.
+`Making' docon-2.12 by a single command,  under the  
+                                        -O key, -M400m, takes    56 sec.
+The size of  libHSdocon-2.12.a  is                              8352 Kb 
+The size of demotest/Main for -O0 is                                
+                              -O                                7764 Kb
+The test running for Main made under -O0 takes                      
+                                     -O                         3.6 sec.
+The minimal -M memory setting for running the test is           2400 Kb.
+
+
+
+** New machine **********************************************************
+16 Gb RAM.  The processor  Intel(R) Core(TM) i7-3820 CPU @ 3.60GHz.
+
+
+-- ghc-7.8.2 -----------------------------------------------------------
+`Making' GHC by itself in 1 Gb RAM takes                        ?  min.
+`Making' docon-2.12 by a single command,  under the  
+                                        -O key, -M400m, takes    48 sec.
+The size of  libHSdocon-2.12.a  is                             11109 Kb 
+The size of demotest/Main for -O0 is                                
+                              -O                                8418 Kb
+The test running for Main made under -O0 takes                      
+                                     -O                         2.4 sec.
+The minimal -M memory setting for running the test is           4300 Kb.

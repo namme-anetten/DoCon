@@ -1,0 +1,49 @@
+name:            docon
+version:         2.12
+license-file:    "../../license.txt"
+copyright:       Serge Mechveliani (2012)
+author:          Serge Mechveliani
+maintainer:      mechvel@botik.ru
+homepage:        http://www.botik.ru/pub/local/Mechveliani/docon/
+package-url:     http://www.botik.ru/pub/local/Mechveliani/docon/
+                 http://www.haskell.org/docon/distrib/
+synopsis:        computer algebra library written in Haskell
+tested-with:     GHC
+                 -- should be like  "ghc-6.12.3" "Hugs-5.5" ...
+                 .
+build-type:      Simple
+build-depends:   base >= 4 && < 5, containers >= 0.3 && <= 0.5.5.1, 
+                 random >= 1.0 && < 1.2
+                 -- AC-Random 
+--
+-- hs-source-dirs:  "." parse auxil lin residue pol pol/factor
+--                  pol/symmfunc
+                 .
+exposed-modules:
+        DExport DPrelude Categs SetGroup RingModule DPair Z Fraction
+        VecMatr LinAlg Pol GBasis Residue Permut Partition AlgSymmF SolveCubic
+        SolveQuartic 
+        .
+other-modules:
+  Iparse_ OpTab_  System_ 
+  Categs_ DPair_ Matr0_ Ring0_ Semigr_ Vec1_ Char_ Fract_ Matr1_ Ring1_ Set_ 
+  Vec_ Common_ List_ Prelude_ Ring_ Vec0_ Det_ Stairc_ Todiag_
+  IdealSyz_ ResEuc0_ ResEuc_ ResRing__ RsePol0_ QuotGr_ ResEuc1_ ResPol_ 
+  ResRing_ RsePol_ EPol0_
+  Pgcd_ Pol_ RPol0_ EPol1_ FreeMonoid Pol1_ PolNF_ RPol_ EPol_
+  GBasEuc_ Pol2_ Polrel_ FAA0_ GBasFld_ Pol3_ PP_ UPol0_ FAANF_
+  GBas_ Pol__ RdLatP_ UPol_
+  Pfact0_ Pfact1_ Pfact2_ Pfact3_ Pfact__ Pfact_
+  HookBand_ Partit_ SymmFn0_ SymmFn1_ SymmFn_ Sympol_
+  .
+extensions:
+  TypeSynonymInstances UndecidableInstances FlexibleContexts
+  FlexibleInstances MultiParamTypeClasses OverlappingInstances
+  RecordWildCards NamedFieldPuns DoAndIfThenElse
+  .
+ghc-options:
+  -fno-warn-overlapping-patterns -fwarn-unused-binds
+  -fwarn-unused-matches -fwarn-unused-imports 
+  -fcontext-stack=30
+  -O
+  +RTS -M400m -RTS
